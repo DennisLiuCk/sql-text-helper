@@ -7,6 +7,7 @@ A collection of utilities for processing SQL query results and CSV files.
 - [Features](#features)
   - [CSV to MySQL Tuple](#csv-to-mysql-tuple)
   - [CSV Deduplication](#csv-deduplication)
+- [Testing](#testing)
 
 ## Requirements
 
@@ -114,6 +115,45 @@ STORE_SKU_ID,PRODUCT_CAT_CODE,ONLINE_STATUS
 C0003001_S_amila008-1,AA28625015001,ONLINE
 C0003001_S_amila008-2,AA28625015001,ONLINE
 ```
+
+## Testing
+
+The project includes comprehensive unit tests for all features. Tests are located in the `tests` directory.
+
+### Running Tests
+
+To run all tests:
+```bash
+python -m unittest discover tests
+```
+
+To run tests for a specific feature:
+```bash
+# Test CSV to MySQL conversion
+python -m unittest tests/test_csv_to_mysql.py
+
+# Test CSV deduplication
+python -m unittest tests/test_deduplicate_csv.py
+```
+
+### Test Coverage
+
+The test suite covers:
+
+#### CSV to MySQL Tests
+- Basic conversion with quotes
+- Conversion without quotes
+- Column names with spaces
+- Case-insensitive column matching
+- Empty column values
+- Error handling (missing files/columns)
+
+#### CSV Deduplication Tests
+- Basic row deduplication
+- Files without duplicates
+- Empty files
+- Multiple duplicate rows
+- Output directory creation
 
 ## Adding New Features
 
