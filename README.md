@@ -7,6 +7,7 @@ A collection of utilities for processing SQL query results and CSV files.
 - [Features](#features)
   - [CSV to MySQL Tuple](#csv-to-mysql-tuple)
   - [CSV Deduplication](#csv-deduplication)
+  - [CSV to MySQL Update Script](#csv-to-mysql-update-script)
 - [Testing](#testing)
 
 ## Requirements
@@ -114,6 +115,47 @@ Output CSV (`source_deduplicated_20250109_160000.csv`):
 STORE_SKU_ID,PRODUCT_CAT_CODE,ONLINE_STATUS
 C0003001_S_amila008-1,AA28625015001,ONLINE
 C0003001_S_amila008-2,AA28625015001,ONLINE
+```
+
+### CSV to MySQL Update Script
+
+Convert CSV content to MySQL update script, suitable for updating rows in a MySQL table.
+
+#### Technical Implementation
+- Uses Python's built-in `csv.DictReader` for robust CSV parsing
+- Generates MySQL update statements for each row in the CSV
+- Handles column names with spaces intelligently
+- Supports UTF-8 encoded files for international character support
+- Includes error handling for file operations and data processing
+- Provides flexible output options (console or file)
+
+#### Usage
+```bash
+# Basic usage
+python csv_to_mysql.py <csv_file> update_script <table_name>
+
+# Save to output file
+python csv_to_mysql.py <csv_file> update_script <table_name> output/result.txt
+```
+
+#### Example
+
+Input CSV (`source.csv`):
+```csv
+id,name,age
+1,'may',10
+2,'Allen',15
+```
+
+Command:
+```bash
+python csv_to_mysql.py source.csv update_script user
+```
+
+Output:
+```sql
+Update user set name = 'may', age = 10 where id = 1;
+Update user set name = 'Allen', age = 15 where id = 2;
 ```
 
 ## Testing

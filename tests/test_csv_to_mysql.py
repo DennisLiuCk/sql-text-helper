@@ -1,7 +1,7 @@
 import unittest
 import os
 import tempfile
-from csv_to_mysql import csv_column_to_mysql_tuple
+from csv_to_mysql import csv_column_to_mysql_tuple, csv_to_mysql_update_script
 
 class TestCsvToMysql(unittest.TestCase):
     def setUp(self):
@@ -78,6 +78,15 @@ class TestCsvToMysql(unittest.TestCase):
         """Test behavior with nonexistent file"""
         result = csv_column_to_mysql_tuple("nonexistent.csv", "PRODUCT_CODE")
         self.assertIsNone(result)
+    
+    def test_update_script_generation(self):
+        """Test CSV to MySQL update script generation"""
+        csv_content = "id,name,age\n1,'may',10\n2,'Allen',15"
+        filepath = self.create_test_csv(csv_content)
+        
+        result = csv_to_mysql_update_script(filepath, "user")
+        expected = "Update user set name = 'may', age = 10 where id = 1;\nUpdate user set name = 'Allen', age = 15 where id = 2;"
+        self.assertEqual(result, expected)
 
 if __name__ == '__main__':
     unittest.main()
