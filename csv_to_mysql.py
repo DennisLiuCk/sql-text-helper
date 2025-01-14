@@ -83,6 +83,48 @@ def csv_column_to_mysql_tuple(csv_file, column_name, add_quotes=True):
         print(f"Error: An unexpected error occurred: {str(e)}")
         return None
 
+def csv_to_mysql_update_script(csv_file, table_name):
+    """
+    Convert CSV content to MySQL update script.
+    
+    Args:
+        csv_file (str): Path to the CSV file
+        table_name (str): Name of the MySQL table to update
+        
+    Returns:
+        str: MySQL update script
+        
+    Example:
+        ```source.csv
+            id,name,age
+            1,'may',10
+            2,'Allen',15
+        ```
+        
+        csv_to_mysql_update_script('source.csv', 'user')
+        # Output:
+        # Update user set name = 'may', age = 10 where id = 1;
+        # Update user set name = 'Allen', age = 15 where id = 2;
+    """
+    try:
+        with open(csv_file, 'r', encoding='utf-8') as f:
+            reader = csv.DictReader(f)
+            update_statements = []
+            
+            for row in reader:
+                set_clause = ", ".join([f"{col} = {value}" for col, value in row.items() if col != 'id'])
+                update_statement = f"Update {table_name} set {set_clause} where id = {row['id']};"
+                update_statements.append(update_statement)
+            
+            return "\n".join(update_statements)
+            
+    except FileNotFoundError:
+        print(f"Error: File '{csv_file}' not found.")
+        return None
+    except Exception as e:
+        print(f"Error: An unexpected error occurred: {str(e)}")
+        return None
+
 def save_to_file(content, output_file):
     """
     Save content to a file.
@@ -125,7 +167,12 @@ def main():
         column_name = ' '.join(args)
         output_file = None
     
-    result = csv_column_to_mysql_tuple(csv_file, column_name, add_quotes)
+    if column_name.lower() == 'update_script':
+        table_name = args[0]
+        result = csv_to_mysql_update_script(csv_file, table_name)
+    else:
+        result = csv_column_to_mysql_tuple(csv_file, column_name, add_quotes)
+    
     if result:
         if output_file:
             save_to_file(result, output_file)
